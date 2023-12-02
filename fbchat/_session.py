@@ -24,6 +24,8 @@ SERVER_JS_DEFINE_JSON_DECODER = json.JSONDecoder()
 def parse_server_js_define(html: str) -> Mapping[str, Any]:
     """Parse ``ServerJSDefine`` entries from a HTML document."""
     # Find points where we should start parsing
+    # with open("tests/page.html", "w") as file:
+    #     file.write(html)
     define_splits = SERVER_JS_DEFINE_REGEX.split(html)
 
     # TODO: Extract jsmods "require" and "define" from `bigPipe.onPageletArrive`?
@@ -416,11 +418,12 @@ class Session:
             _exception.handle_requests_error(e)
         _exception.handle_http_error(r.status_code)
 
-        define = parse_server_js_define(r.content.decode("utf-8"))
+		# TODO: make it more robust haha ^^
+        html = r.content.decode("utf-8")
+        fb_dtsg = re.search(r"DTSGInitData\":{\"token\":\"(.+?)\"", html).group(1)
 
-        fb_dtsg = get_fb_dtsg(define)
         if fb_dtsg is None:
-            raise _exception.ParseError("Could not find fb_dtsg", data=define)
+            raise _exception.ParseError("Could not find fb_dtsg", data=html)
         if not fb_dtsg:
             # Happens when the client is not actually logged in
             raise _exception.NotLoggedIn(
@@ -428,9 +431,10 @@ class Session:
             )
 
         try:
-            revision = int(define["SiteData"]["client_revision"])
+            # TODO: make it more robust haha ^^
+            revision = re.search(r"client_revision\":(\d+)", html).group(1)
         except TypeError:
-            raise _exception.ParseError("Could not find client revision", data=define)
+            raise _exception.ParseError("Could not find client revision", data=html)
 
         return cls(user_id=user_id, fb_dtsg=fb_dtsg, revision=revision, session=session)
 
