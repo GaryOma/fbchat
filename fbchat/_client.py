@@ -532,6 +532,9 @@ class Client:
         if len(j["metadata"]) != len(file_dict):
             raise _exception.ParseError("Some files could not be uploaded", data=j)
 
+        if type(j['metadata']) != list:
+            j['metadata'] = list(j['metadata'].values())
+
         return [
             (str(item[_util.mimetype_to_key(item["filetype"])]), item["filetype"])
             for item in j["metadata"]
