@@ -420,7 +420,7 @@ class Session:
 
 		# TODO: make it more robust haha ^^
         html = r.content.decode("utf-8")
-        fb_dtsg = re.search(r"DTSGInitData\":{\"token\":\"(.+?)\"", html).group(1)
+        fb_dtsg = re.search(r"DTSGInitData\",\[\],{\"token\":\"(.+?)\"", html).group(1)
 
         if fb_dtsg is None:
             raise _exception.ParseError("Could not find fb_dtsg", data=html)
