@@ -413,14 +413,14 @@ class Session:
 
         # Make a request to the main page to retrieve ServerJSDefine entries
         try:
-            r = session.get(prefix_url("/"), allow_redirects=False)
+            r = session.get(prefix_url("/"), allow_redirects=True)
         except requests.RequestException as e:
             _exception.handle_requests_error(e)
         _exception.handle_http_error(r.status_code)
 
 		# TODO: make it more robust haha ^^
         html = r.content.decode("utf-8")
-        fb_dtsg = re.search(r"DTSGInitData\":{\"token\":\"(.+?)\"", html).group(1)
+        fb_dtsg = re.search(r"DTSGInitData\",\[\],{\"token\":\"(.+?)\"", html).group(1)
 
         if fb_dtsg is None:
             raise _exception.ParseError("Could not find fb_dtsg", data=html)
