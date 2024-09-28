@@ -413,7 +413,7 @@ class Session:
 
         # Make a request to the main page to retrieve ServerJSDefine entries
         try:
-            r = session.get(prefix_url("/"), allow_redirects=False)
+            r = session.get(prefix_url("/"), allow_redirects=True)
         except requests.RequestException as e:
             _exception.handle_requests_error(e)
         _exception.handle_http_error(r.status_code)
