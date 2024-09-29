@@ -114,7 +114,7 @@ def login_cookies(at: datetime.datetime):
 
 
 def client_id_factory() -> str:
-    return hex(int(random.random() * 2 ** 31))[2:]
+    return hex(int(random.random() * 2**31))[2:]
 
 
 def find_form_request(html: str):
@@ -305,12 +305,46 @@ class Session:
             "default_persistent": "0",
         }
 
+        raw_data = {
+            "jazoest": "2965",
+            "lsd": "AVorNi3akRE",
+            "initial_request_id": "AtchcfpQYCCGTcyk6UcsUxg",
+            "timezone": "-120",
+            "lgndim": "eyJ3IjoxNTM2LCJoIjo4NjQsImF3IjoxNTM2LCJhaCI6ODI0LCJjIjoyNH0=",
+            "lgnrnd": "144604_iJCq",
+            "lgnjs": "n",
+            "email": email,
+            "pass": password,
+            "default_persistent": "",
+        }
+        raw_headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            "Accept-Language": "fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3",
+            "Accept-Encoding": "gzip, deflate, br, zstd",
+            "Referer": "https://www.messenger.com/login/",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Origin": "https://www.messenger.com",
+            "DNT": "1",
+            "Sec-GPC": "1",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            "Sec-Fetch-Dest": "document",
+            "Sec-Fetch-Mode": "navigate",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-Fetch-User": "?1",
+            "Priority": "u=0, i",
+            "TE": "trailers",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache",
+        }
         try:
             # Should hit a redirect to https://www.messenger.com/
             # If this does happen, the session is logged in!
             r = session.post(
                 "https://www.messenger.com/login/password/",
-                data=data,
+                data=raw_data,
+                headers=raw_headers,
                 allow_redirects=False,
                 cookies=login_cookies(_util.now()),
             )
@@ -418,7 +452,7 @@ class Session:
             _exception.handle_requests_error(e)
         _exception.handle_http_error(r.status_code)
 
-		# TODO: make it more robust haha ^^
+        # TODO: make it more robust haha ^^
         html = r.content.decode("utf-8")
         fb_dtsg = re.search(r"DTSGInitData\",\[\],{\"token\":\"(.+?)\"", html).group(1)
 
